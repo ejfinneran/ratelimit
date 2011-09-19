@@ -1,5 +1,7 @@
 require 'rubygems'
 require 'bundler'
+require 'redis'
+require 'mock_redis'
 begin
   Bundler.setup(:default, :development)
 rescue Bundler::BundlerError => e
@@ -9,6 +11,10 @@ rescue Bundler::BundlerError => e
 end
 require 'test/unit'
 require 'shoulda'
+require 'mocha'
+require 'timecop'
+# Mock out redis for tests
+#Redis.stubs(:new).returns(MockRedis.new)
 
 $LOAD_PATH.unshift(File.join(File.dirname(__FILE__), '..', 'lib'))
 $LOAD_PATH.unshift(File.dirname(__FILE__))

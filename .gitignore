@@ -10,7 +10,8 @@ doc
 
 # bundler
 .bundle
-
+# Gems installed to vendor
+vendor
 # jeweler generated
 pkg
 
