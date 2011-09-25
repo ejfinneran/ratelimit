@@ -13,6 +13,7 @@ require 'test/unit'
 require 'shoulda'
 require 'mocha'
 require 'timecop'
+require 'timeout'
 # Mock out redis for tests
 #Redis.stubs(:new).returns(MockRedis.new)
 
