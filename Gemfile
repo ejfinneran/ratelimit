@@ -8,6 +8,7 @@ gem 'redis-namespace'
 # Add dependencies to develop your gem here.
 # Include everything needed to run rake, tests, features, etc.
 group :development do
+  gem "rdoc"
   gem "shoulda", ">= 0"
   gem "timecop"
   gem "mocha", "~> 0.10"
