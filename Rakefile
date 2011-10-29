@@ -39,6 +39,7 @@ namespace :doc do
   doc_destination = File.join(project_root, 'rdoc')
 
   begin
+    require 'rdoc'
     require 'yard'
     require 'yard/rake/yardoc_task'
 
