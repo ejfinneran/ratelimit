@@ -1,6 +1,6 @@
 Gem::Specification.new do |s|
   s.name        = 'ratelimit'
-  s.version     = '0.0.1'
+  s.version     = '0.0.2'
   s.date        = '2011-10-29'
   s.summary     = "Rate limiting backed by redis"
   s.description = "This library uses Redis to track the number of actions for a given subject over a flexible time frame."
