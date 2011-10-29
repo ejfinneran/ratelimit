@@ -105,6 +105,6 @@ class Ratelimit
   end
 
   def redis
-    @@redis = Redis::Namespace.new(:ratelimit, :redis => @redis || Redis.new)
+    @redis ||= Redis::Namespace.new(:ratelimit, :redis => @redis || Redis.new)
   end
 end
