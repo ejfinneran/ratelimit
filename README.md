@@ -33,3 +33,8 @@ You can also pass a block that will only get executed if the given threshold is 
     ratelimit.exec_within_threshold(phone_number, {:threshold => 10, :interval => 30}) do
       some_rate_limited_code
     end
+
+Documentation
+-------------
+
+Full documentation can be found [here.](http://rubydoc.info/github/ejfinneran/ratelimit/frames)
