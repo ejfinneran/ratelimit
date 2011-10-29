@@ -6,18 +6,19 @@ class Ratelimit
   # Create a RateLimit object.
   #
   # @param [String] key A name to uniquely identify this rate limit. For example, 'emails'
-  # @param [Integer] bucket_span Time span to track in seconds
-  # @param [Integer] bucket_interval How many seconds each bucket represents
-  # @param [Integer] bucket_expiry How long we keep data in each bucket before it is auto expired.
   # @param [Redis] redis Redis instance to use. One is created if nothing is passed.
+  # @param [Hash] options Options hash
+  # @option options [Integer] :bucket_span (600) Time span to track in seconds
+  # @option options [Integer] :bucket_interval (5) How many seconds each bucket represents
+  # @option options [Integer] :bucket_expiry (1200) How long we keep data in each bucket before it is auto expired.
   #
   # @return [RateLimit] RateLimit instance
   #
-  def initialize(key, bucket_span = 600, bucket_interval = 5, bucket_expiry = 1200, redis = nil)
+  def initialize(key, redis = nil, options = {}) #bucket_span = 600, bucket_interval = 5, bucket_expiry = 1200, redis = nil)
     @key = key
-    @bucket_span = bucket_span
-    @bucket_interval = bucket_interval
-    @bucket_expiry = bucket_expiry
+    @bucket_span = options[:bucket_span] || 600
+    @bucket_interval = options[:bucket_interval] || 5
+    @bucket_expiry = options[:bucket_expiry] || 1200
     @bucket_count = (@bucket_span / @bucket_interval).round
     @redis = redis
   end
