@@ -6,6 +6,7 @@ GEM
       bundler (~> 1.0)
       git (>= 1.2.5)
       rake
+    json (1.6.1)
     metaclass (0.0.1)
     mocha (0.10.0)
       metaclass (~> 0.0.1)
@@ -17,6 +18,10 @@ GEM
     redis-namespace (1.1.0)
       redis (< 3.0.0)
     shoulda (2.11.3)
+    simplecov (0.5.4)
+      multi_json (~> 1.0.3)
+      simplecov-html (~> 0.5.3)
+    simplecov-html (0.5.3)
     timecop (0.3.5)
 
 PLATFORMS
@@ -27,9 +32,9 @@ DEPENDENCIES
   jeweler (~> 1.6.4)
   mocha (~> 0.10)
   mock_redis (~> 0.2.0)
-  rcov
   rdoc
   redis
   redis-namespace
   shoulda
+  simplecov
   timecop
