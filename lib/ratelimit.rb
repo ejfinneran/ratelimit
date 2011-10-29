@@ -3,8 +3,16 @@ require 'redis-namespace'
 
 class Ratelimit
 
-  attr_reader :bucket_interval
-
+  # Create a RateLimit object.
+  #
+  # @param [String] key A name to uniquely identify this rate limit. For example, 'emails'
+  # @param [Integer] bucket_span Time span to track in seconds
+  # @param [Integer] bucket_interval How many seconds each bucket represents
+  # @param [Integer] bucket_expiry How long we keep data in each bucket before it is auto expired.
+  # @param [Redis] redis Redis instance to use. One is created if nothing is passed.
+  #
+  # @return [RateLimit] RateLimit instance
+  #
   def initialize(key, bucket_span = 600, bucket_interval = 5, bucket_expiry = 1200, redis = nil)
     @key = key
     @bucket_span = bucket_span
@@ -14,6 +22,9 @@ class Ratelimit
     @redis = redis
   end
 
+  # Add to the counter for a given subject.
+  #
+  # @param [String] subject A unique key to identify the subject. For example, 'user@foo.com'
   def add(subject)
     bucket = get_bucket
     subject = @key + ":" + subject
@@ -25,6 +36,10 @@ class Ratelimit
     end 
   end
 
+  # Returns the count for a given subject and interval
+  #
+  # @param [String] subject Subject for the count
+  # @param [Integer] interval How far back (in seconds) to retrieve activity.
   def count(subject, interval)
     bucket = get_bucket
     interval = [interval, @bucket_interval].max
@@ -40,14 +55,39 @@ class Ratelimit
     return counts.inject(0) {|a, i| a += i.to_i}
   end
 
+  # Check if the rate limit has been exceeded.
+  #
+  # @param [String] subject Subject to check
+  # @param [Hash] options Options hash
+  # @option options [Integer] :interval How far back to retrieve activity.
+  # @option options [Integer] :threshold Maximum number of actions
   def exceeded?(subject, options = {})
     return count(subject, options[:interval]) >= options[:threshold]
   end
 
+  # Check if the rate limit is within bounds
+  #
+  # @param [String] subject Subject to check
+  # @param [Hash] options Options hash
+  # @option options [Integer] :interval How far back to retrieve activity.
+  # @option options [Integer] :threshold Maximum number of actions
   def within_bounds?(subject, options = {})
     return !exceeded?(subject, options)
   end
 
+  # Execute a block once the rate limit is within bounds
+  # *WARNING* This will block the current thread until the rate limit is within bounds.
+  #
+  # @param [String] subject Subject for this rate limit
+  # @param [Hash] options Options hash
+  # @option options [Integer] :interval How far back to retrieve activity.
+  # @option options [Integer] :threshold Maximum number of actions
+  # @yield The block to be run
+  #
+  # @example Send an email as long as we haven't send 5 in the last 10 minutes
+  #   ratelimit.exec_with_threshold(email, [:threshold => 5, :interval => 600]) do
+  #     send_another_email
+  #   end
   def exec_within_threshold(subject, options = {}, &block)
     options[:threshold] ||= 30
     options[:interval] ||= 30

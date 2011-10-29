@@ -34,12 +34,28 @@ end
 
 task :default => :test
 
-require 'rdoc/task'
-RDoc::Task.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
+namespace :doc do
+  project_root = File.dirname(__FILE__)
+  doc_destination = File.join(project_root, 'rdoc')
 
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "ratelimit #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
+  begin
+    require 'yard'
+    require 'yard/rake/yardoc_task'
+
+    YARD::Rake::YardocTask.new(:generate) do |yt|
+    yt.files   = Dir.glob(File.join(project_root, 'lib', '**', '*.rb')) 
+    yt.options = ['--output-dir', doc_destination, '--readme', 'README.md']
+  end
+  rescue LoadError
+    desc "Generate YARD Documentation"
+    task :generate do
+      abort "Please install the YARD gem to generate rdoc."
+    end
+  end
+
+  desc "Remove generated documenation"
+  task :clean do
+    rm_r doc_dir if File.exists?(doc_destination)
+  end
+
 end
