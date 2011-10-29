@@ -6,12 +6,16 @@ GEM
       bundler (~> 1.0)
       git (>= 1.2.5)
       rake
+    json (1.6.1)
     metaclass (0.0.1)
     mocha (0.10.0)
       metaclass (~> 0.0.1)
     mock_redis (0.2.0)
+    multi_json (1.0.3)
     rake (0.9.2)
     rdiscount (1.6.8)
+    rdoc (3.11)
+      json (~> 1.4)
     redis (2.2.2)
     redis-namespace (1.1.0)
       redis (< 3.0.0)
@@ -32,6 +36,7 @@ DEPENDENCIES
   mocha (~> 0.10)
   mock_redis (~> 0.2.0)
   rdiscount
+  rdoc
   redis
   redis-namespace
   shoulda
