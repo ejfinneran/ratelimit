@@ -28,7 +28,7 @@ class Ratelimit
   # @param [String] subject A unique key to identify the subject. For example, 'user@foo.com'
   def add(subject)
     bucket = get_bucket
-    subject = @key + ":" + subject
+    subject = "#{@key}:#{subject}"
     redis.multi do
       redis.hincrby(subject, bucket, 1)
       redis.hdel(subject, (bucket + 1) % @bucket_count)
@@ -45,7 +45,7 @@ class Ratelimit
     bucket = get_bucket
     interval = [interval, @bucket_interval].max
     count = (interval / @bucket_interval).floor
-    subject = @key + ":" + subject
+    subject = "#{@key}:#{subject}"
     counts = redis.multi do
       redis.hget(subject, bucket)
       count.downto(1) do
