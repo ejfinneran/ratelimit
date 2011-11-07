@@ -17,6 +17,16 @@ class TestRatelimit < Test::Unit::TestCase
     end
   end
 
+  should "be able to add to the count for a non-string subject" do
+    @r.add(123)
+    @r.add(123)
+    assert_equal 2, @r.count(123, 1)
+    assert_equal 0, @r.count(124, 1)
+    Timecop.travel(10) do
+      assert_equal 0, @r.count(123, 1)
+    end
+  end
+
   should "respond to exceeded? method correctly" do
     5.times do
       @r.add("value1")
