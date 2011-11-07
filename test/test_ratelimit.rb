@@ -7,12 +7,23 @@ class TestRatelimit < Test::Unit::TestCase
     @r.send(:redis).flushdb
   end
   
+  should "set bucket_expiry to the bucket_span if not defined" do
+    @r = Ratelimit.new("key")
+    assert_equal @r.instance_variable_get(:@bucket_span), @r.instance_variable_get(:@bucket_expiry)
+  end
+
+  should "not allow bucket expiry to be larger than the bucket span" do
+    assert_raise(ArgumentError) do
+      @r = Ratelimit.new("key", nil, {:bucket_expiry => 1200})
+    end
+  end
+
   should "be able to add to the count for a given subject" do
     @r.add("value1")
     @r.add("value1")
     assert_equal 2, @r.count("value1", 1)
     assert_equal 0, @r.count("value2", 1)
-    Timecop.travel(10) do
+    Timecop.travel(600) do
       assert_equal 0, @r.count("value1", 1)
     end
   end

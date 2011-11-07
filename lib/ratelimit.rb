@@ -10,15 +10,16 @@ class Ratelimit
   # @param [Hash] options Options hash
   # @option options [Integer] :bucket_span (600) Time span to track in seconds
   # @option options [Integer] :bucket_interval (5) How many seconds each bucket represents
-  # @option options [Integer] :bucket_expiry (1200) How long we keep data in each bucket before it is auto expired.
+  # @option options [Integer] :bucket_expiry (@bucket_span) How long we keep data in each bucket before it is auto expired. Cannot be larger than the bucket_span.
   #
   # @return [RateLimit] RateLimit instance
   #
-  def initialize(key, redis = nil, options = {}) #bucket_span = 600, bucket_interval = 5, bucket_expiry = 1200, redis = nil)
+  def initialize(key, redis = nil, options = {})
     @key = key
     @bucket_span = options[:bucket_span] || 600
     @bucket_interval = options[:bucket_interval] || 5
-    @bucket_expiry = options[:bucket_expiry] || 1200
+    @bucket_expiry = options[:bucket_expiry] || @bucket_span
+    raise ArgumentError.new("Bucket expiry cannot be larger than the bucket span") if @bucket_expiry > @bucket_span
     @bucket_count = (@bucket_span / @bucket_interval).round
     @redis = redis
   end
