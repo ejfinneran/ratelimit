@@ -1,0 +1,11 @@
+0.0.2 10/29/2011 38422666592c32dc079fd46bb41b5f526a7cf1d2
+=========================================================
+
+Initial Relase
+
+
+0.0.3 11/08/2011 b5b81dcc488f231b6a7abbdeb87c7ddf247b4029
+=========================================================
+
+Allow non-string subject and key -- Thanks Alexey Noskov
+Fix for bucket_expiry allowed to be larger than bucket_span and causing bad results -- Thanks Alexey Noskov
