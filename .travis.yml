@@ -4,6 +4,6 @@ rvm:
   - 1.9.2
   - 1.9.3
   - ree
-  - rbx-2.0
+  - rbx-19mode
   - jruby
   - 2.0.0
