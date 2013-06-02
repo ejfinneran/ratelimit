@@ -6,3 +6,4 @@ rvm:
   - ree
   - rbx-2.0
   - jruby
+  - 2.0.0

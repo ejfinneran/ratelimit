@@ -13,7 +13,6 @@ group :development do
   gem "timecop"
   gem "mocha", "~> 0.10"
   gem "mock_redis", "~> 0.2.0"
-  gem "bundler", "~> 1.0.0"
   gem "jeweler", "~> 1.6.4"
   gem "yard"
   gem "rdiscount"
