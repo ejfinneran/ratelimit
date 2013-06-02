@@ -13,7 +13,7 @@ GEM
     mock_redis (0.2.0)
     multi_json (1.0.3)
     rake (0.9.2)
-    rdiscount (1.6.8)
+    rdiscount (2.1.6)
     rdoc (3.11)
       json (~> 1.4)
     redis (2.2.2)
@@ -28,6 +28,7 @@ GEM
     yard (0.7.3)
 
 PLATFORMS
+  java
   ruby
 
 DEPENDENCIES
