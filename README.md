@@ -1,10 +1,10 @@
 Ratelimit: Slow your roll
 ==========================
 
-[![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.png)](http://travis-ci.org/ejfinneran/ratelimit)
+[![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.png?branch=master)](http://travis-ci.org/ejfinneran/ratelimit)
 
 
-Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis). 
+Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis).
 
 Usage
 -----
