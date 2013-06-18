@@ -28,6 +28,11 @@ class TestRatelimit < Test::Unit::TestCase
     end
   end
 
+  should "be able to add to the count by more than 1" do
+    @r.add("value1", 3)
+    assert_equal 3, @r.count("value1", 1)
+  end
+
   should "be able to add to the count for a non-string subject" do
     @r.add(123)
     @r.add(123)
