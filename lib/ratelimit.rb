@@ -26,12 +26,13 @@ class Ratelimit
 
   # Add to the counter for a given subject.
   #
-  # @param [String] subject A unique key to identify the subject. For example, 'user@foo.com'
-  def add(subject)
+  # @param [String]   subject A unique key to identify the subject. For example, 'user@foo.com'
+  # @param [Integer]  count   The number by which to increase the counter
+  def add(subject, count = 1)
     bucket = get_bucket
     subject = "#{@key}:#{subject}"
     redis.multi do
-      redis.hincrby(subject, bucket, 1)
+      redis.hincrby(subject, bucket, count)
       redis.hdel(subject, (bucket + 1) % @bucket_count)
       redis.hdel(subject, (bucket + 2) % @bucket_count)
       redis.expire(subject, @bucket_expiry)
