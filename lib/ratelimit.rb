@@ -11,17 +11,23 @@ class Ratelimit
   # @option options [Integer] :bucket_span (600) Time span to track in seconds
   # @option options [Integer] :bucket_interval (5) How many seconds each bucket represents
   # @option options [Integer] :bucket_expiry (@bucket_span) How long we keep data in each bucket before it is auto expired. Cannot be larger than the bucket_span.
+  # @option options [Redis]   :redis (nil) Redis client if you need to customize connection options
   #
   # @return [RateLimit] RateLimit instance
   #
-  def initialize(key, redis = nil, options = {})
+  def initialize(key, options = {})
     @key = key
+    unless options.is_a?(Hash)
+      raise ArgumentError.new("Redis object is now passed in via the options hash - options[:redis]")
+    end
     @bucket_span = options[:bucket_span] || 600
     @bucket_interval = options[:bucket_interval] || 5
     @bucket_expiry = options[:bucket_expiry] || @bucket_span
-    raise ArgumentError.new("Bucket expiry cannot be larger than the bucket span") if @bucket_expiry > @bucket_span
+    if @bucket_expiry > @bucket_span
+      raise ArgumentError.new("Bucket expiry cannot be larger than the bucket span")
+    end
     @bucket_count = (@bucket_span / @bucket_interval).round
-    @redis = redis
+    @redis = options[:redis]
   end
 
   # Add to the counter for a given subject.
@@ -36,7 +42,7 @@ class Ratelimit
       redis.hdel(subject, (bucket + 1) % @bucket_count)
       redis.hdel(subject, (bucket + 2) % @bucket_count)
       redis.expire(subject, @bucket_expiry)
-    end 
+    end
   end
 
   # Returns the count for a given subject and interval

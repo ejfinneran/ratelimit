@@ -6,7 +6,7 @@ class TestRatelimit < Test::Unit::TestCase
     @r = Ratelimit.new("key")
     @r.send(:redis).flushdb
   end
-  
+
   should "set bucket_expiry to the bucket_span if not defined" do
     @r = Ratelimit.new("key")
     assert_equal @r.instance_variable_get(:@bucket_span), @r.instance_variable_get(:@bucket_expiry)
@@ -14,7 +14,13 @@ class TestRatelimit < Test::Unit::TestCase
 
   should "not allow bucket expiry to be larger than the bucket span" do
     assert_raise(ArgumentError) do
-      @r = Ratelimit.new("key", nil, {:bucket_expiry => 1200})
+      @r = Ratelimit.new("key", {:bucket_expiry => 1200})
+    end
+  end
+
+  should "not allow redis to be passed outside of the options hash" do
+    assert_raise(ArgumentError) do
+      @r = Ratelimit.new("key", Redis.new)
     end
   end
 
