@@ -1,5 +1,5 @@
-require 'simplecov'
-SimpleCov.start
+require 'coveralls'
+Coveralls.wear!
 require 'rubygems'
 require 'bundler'
 require 'redis'

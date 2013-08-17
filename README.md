@@ -3,6 +3,7 @@ Ratelimit: Slow your roll
 
 [![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.png?branch=master)](http://travis-ci.org/ejfinneran/ratelimit)
 [![Code Climate](https://codeclimate.com/github/ejfinneran/ratelimit.png)](https://codeclimate.com/github/ejfinneran/ratelimit)
+[![Coverage Status](https://coveralls.io/repos/ejfinneran/ratelimit/badge.png)](https://coveralls.io/r/ejfinneran/ratelimit)
 
 Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis).
 
