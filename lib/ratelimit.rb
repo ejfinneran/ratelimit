@@ -36,7 +36,7 @@ class Ratelimit
   def add(subject, count = 1)
     bucket = get_bucket
     subject = "#{@key}:#{subject}"
-    redis.multi do
+    redis.pipelined do
       redis.hincrby(subject, bucket, count)
       redis.hdel(subject, (bucket + 1) % @bucket_count)
       redis.hdel(subject, (bucket + 2) % @bucket_count)
