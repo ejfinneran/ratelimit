@@ -2,6 +2,7 @@ script: "bundle exec rake test"
 rvm:
   - 1.9.2
   - 1.9.3
-  - rbx-19mode
+  - rbx
   - jruby
   - 2.0.0
+  - 2.1.1
