@@ -53,14 +53,11 @@ class Ratelimit
     interval = [interval, @bucket_interval].max
     count = (interval / @bucket_interval).floor
     subject = "#{@key}:#{subject}"
-    counts = redis.multi do
-      redis.hget(subject, bucket)
-      count.downto(1) do
-        bucket -= 1
-        redis.hget(subject, (bucket + @bucket_count) % @bucket_count)
-      end
+
+    keys = (0..count).map do |i|
+      (bucket - i + @bucket_count) % @bucket_count
     end
-    return counts.inject(0) {|a, i| a += i.to_i}
+    return redis.hmget(subject, *keys).inject(0) {|a, i| a + i.to_i}
   end
 
   # Check if the rate limit has been exceeded.
