@@ -16,6 +16,7 @@ group :development do
 end
 
 group :test do
+  gem 'shoulda-matchers', '~> 1.0.0'
   gem "shoulda", ">= 0"
   gem "timecop"
   gem "mocha", "~> 0.10"
