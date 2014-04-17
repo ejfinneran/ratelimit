@@ -49,6 +49,11 @@ class TestRatelimit < Test::Unit::TestCase
     end
   end
 
+  should "return counter value" do
+    r = @r.add("value1")
+    assert_equal @r.count("value1", 1), r
+  end
+
   should "respond to exceeded? method correctly" do
     5.times do
       @r.add("value1")

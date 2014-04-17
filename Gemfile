@@ -19,7 +19,7 @@ group :test do
   gem "shoulda", ">= 0"
   gem "timecop"
   gem "mocha", "~> 0.10"
-  gem "mock_redis", "~> 0.2.0"
+  gem "mock_redis", "~> 0.11.0"
   gem "rake"
   gem 'coveralls', require: false
 end

@@ -33,6 +33,8 @@ class Ratelimit
   #
   # @param [String]   subject A unique key to identify the subject. For example, 'user@foo.com'
   # @param [Integer]  count   The number by which to increase the counter
+  #
+  # @return [Integer] The counter value
   def add(subject, count = 1)
     bucket = get_bucket
     subject = "#{@key}:#{subject}"
@@ -41,7 +43,7 @@ class Ratelimit
       redis.hdel(subject, (bucket + 1) % @bucket_count)
       redis.hdel(subject, (bucket + 2) % @bucket_count)
       redis.expire(subject, @bucket_expiry)
-    end
+    end.first
   end
 
   # Returns the count for a given subject and interval
