@@ -13,7 +13,7 @@ rescue Bundler::BundlerError => e
 end
 require 'test/unit'
 require 'shoulda'
-require 'mocha'
+require 'mocha/setup'
 require 'timecop'
 require 'timeout'
 # Mock out redis for tests
