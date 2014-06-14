@@ -1,5 +1,4 @@
-Ratelimit: Slow your roll
-==========================
+# Ratelimit: Slow your roll
 
 [![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.png?branch=master)](http://travis-ci.org/ejfinneran/ratelimit)
 [![Code Climate](https://codeclimate.com/github/ejfinneran/ratelimit.png)](https://codeclimate.com/github/ejfinneran/ratelimit)
@@ -7,8 +6,22 @@ Ratelimit: Slow your roll
 
 Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis).
 
-Usage
------
+
+## Installation
+
+Add this line to your application's Gemfile:
+
+    gem 'ratelimit'
+
+And then execute:
+
+    $ bundle
+
+Or install it yourself as:
+
+    $ gem install ratelimit
+
+## Usage
 
 My example use case is bulk processing data against an external API.  This will allow you to limit multiple processes across multiple servers as long as they all use the same Redis database.
 
@@ -36,7 +49,14 @@ You can also pass a block that will only get executed if the given threshold is 
       some_rate_limited_code
     end
 
-Documentation
--------------
+## Documentation
 
 Full documentation can be found [here.](http://rubydoc.info/github/ejfinneran/ratelimit/frames)
+
+## Contributing
+
+1. Fork it ( https://github.com/ejfinneran/ratelimit/fork )
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Add some feature'`)
+4. Push to the branch (`git push origin my-new-feature`)
+5. Create a new Pull Request

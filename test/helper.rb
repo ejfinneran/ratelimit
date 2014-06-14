@@ -2,7 +2,6 @@ require 'coveralls'
 Coveralls.wear!
 require 'rubygems'
 require 'bundler'
-require 'redis'
 require 'mock_redis'
 begin
   Bundler.setup(:default, :development)
