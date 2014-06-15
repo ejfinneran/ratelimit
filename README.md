@@ -1,8 +1,8 @@
 # Ratelimit: Slow your roll
 
-[![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.png?branch=master)](http://travis-ci.org/ejfinneran/ratelimit)
-[![Code Climate](https://codeclimate.com/github/ejfinneran/ratelimit.png)](https://codeclimate.com/github/ejfinneran/ratelimit)
-[![Coverage Status](https://coveralls.io/repos/ejfinneran/ratelimit/badge.png)](https://coveralls.io/r/ejfinneran/ratelimit)
+[![Build Status](https://secure.travis-ci.org/ejfinneran/ratelimit.svg?branch=master)](http://travis-ci.org/ejfinneran/ratelimit)
+[![Code Climate](https://img.shields.io/codeclimate/github/ejfinneran/ratelimit.svg)](https://codeclimate.com/github/ejfinneran/ratelimit)
+[![Coverage Status](https://img.shields.io/coveralls/ejfinneran/ratelimit.svg)](https://coveralls.io/r/ejfinneran/ratelimit)
 
 Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis).
 
@@ -11,15 +11,21 @@ Ratelimit provides a way to rate limit actions across multiple servers using Red
 
 Add this line to your application's Gemfile:
 
-    gem 'ratelimit'
+``` rb
+gem 'ratelimit'
+```
 
 And then execute:
 
-    $ bundle
+``` sh
+$ bundle
+```
 
 Or install it yourself as:
 
-    $ gem install ratelimit
+``` sh
+$ gem install ratelimit
+```
 
 ## Usage
 
@@ -29,25 +35,31 @@ Add to the count for a given subject via add with a unique key. I've used the ex
 
 You can then fetch the number of executions for given interval in seconds via the count method.
 
-    ratelimit = Ratelimit.new("messages")
-    5.times do
-      ratelimit.add(phone_number)
-    end
-    ratelimit.count(phone_number, 30)
-    => 5
+``` rb
+ratelimit = Ratelimit.new("messages")
+5.times do
+  ratelimit.add(phone_number)
+end
+ratelimit.count(phone_number, 30)
+# => 5
+```
 
 You can check if a given threshold has been exceeded or not. The following code checks if the currently rate is over 10 executions in the last 30 seconds or not.
 
-    ratelimit.exceeded?(phone_number, {:threshold => 10, :interval => 30})
-    => false
-    ratelimit.within_bounds?(phone_number, {:threshold => 10, :interval => 30})
-    => true
+``` rb
+ratelimit.exceeded?(phone_number, threshold: 10, interval: 30)
+# => false
+ratelimit.within_bounds?(phone_number, threshold: 10, interval: 30)
+# => true
+```
 
 You can also pass a block that will only get executed if the given threshold is within bounds. Beware, this code blocks until the block can be run.
 
-    ratelimit.exec_within_threshold(phone_number, {:threshold => 10, :interval => 30}) do
-      some_rate_limited_code
-    end
+``` rb
+ratelimit.exec_within_threshold phone_number, threshold: 10, interval: 30 do
+  some_rate_limited_code
+end
+```
 
 ## Documentation
 
