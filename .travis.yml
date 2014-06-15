@@ -2,8 +2,9 @@ script: "bundle exec rspec"
 rvm:
   - 1.9.2
   - 1.9.3
-  - rbx
-  - jruby
   - 2.0.0
   - 2.1.1
   - 2.1.2
+  - rbx-2
+  - jruby-19mode
+  - jruby-head
