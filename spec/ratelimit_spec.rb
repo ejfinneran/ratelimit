@@ -92,4 +92,12 @@ describe Ratelimit do
     end
     expect(@value).to be 1
   end
+
+
+  it "counts correclty if bucket_span equals count-interval  " do
+    @r = Ratelimit.new("key", {:bucket_span => 10, bucket_interval: 1})
+    @r.add('value1')
+    expect(@r.count('value1', 10)).to eql(1)
+  end
+
 end
