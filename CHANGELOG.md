@@ -1,3 +1,6 @@
+# 1.0.1 08/05/2014
+* #14 fix issue with wrong count on bucket_span == count(..interval) - @olgen
+
 # 1.0.0 06/15/2014
 
 
