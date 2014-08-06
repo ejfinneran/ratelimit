@@ -56,8 +56,8 @@ class Ratelimit
     count = (interval / @bucket_interval).floor
     subject = "#{@key}:#{subject}"
 
-    keys = (0..count).map do |i|
-      (bucket - i + @bucket_count) % @bucket_count
+    keys = (0..count - 1).map do |i|
+      (bucket - i) % @bucket_count
     end
     return redis.hmget(subject, *keys).inject(0) {|a, i| a + i.to_i}
   end
