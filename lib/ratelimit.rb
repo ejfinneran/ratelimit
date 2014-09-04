@@ -26,6 +26,9 @@ class Ratelimit
       raise ArgumentError.new("Bucket expiry cannot be larger than the bucket span")
     end
     @bucket_count = (@bucket_span / @bucket_interval).round
+    if @bucket_count < 3
+      raise ArgumentError.new("Cannot have less than 3 buckets")
+    end
     @redis = options[:redis]
   end
 
