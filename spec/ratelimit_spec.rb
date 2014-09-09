@@ -11,6 +11,12 @@ describe Ratelimit do
     expect(@r.instance_variable_get(:@bucket_span)).to eq(@r.instance_variable_get(:@bucket_expiry))
   end
 
+  it "should not allow bucket count less than 3" do
+    expect do
+      Ratelimit.new("key", {:bucket_span => 1, :bucket_interval => 1})
+    end.to raise_error(ArgumentError)
+  end
+
   it "should not allow bucket expiry to be larger than the bucket span" do
     expect do
       Ratelimit.new("key", {:bucket_expiry => 1200})
