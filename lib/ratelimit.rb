@@ -29,7 +29,7 @@ class Ratelimit
     if @bucket_count < 3
       raise ArgumentError.new("Cannot have less than 3 buckets")
     end
-    @redis = options[:redis]
+    @raw_redis = options[:redis]
   end
 
   # Add to the counter for a given subject.
@@ -114,6 +114,6 @@ class Ratelimit
   end
 
   def redis
-    @redis ||= Redis::Namespace.new(:ratelimit, :redis => @redis || Redis.new)
+    @redis ||= Redis::Namespace.new(:ratelimit, redis: @raw_redis || Redis.new)
   end
 end
