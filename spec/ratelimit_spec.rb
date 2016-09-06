@@ -1,10 +1,9 @@
 require 'spec_helper'
 
 describe Ratelimit do
-
   before do
     @r = Ratelimit.new("key")
-    @r.send(:redis).flushdb
+    @r.send(:use_redis) { |r| r.flushdb }
   end
 
   it "should set_bucket_expiry to the bucket_span if not defined" do
@@ -106,4 +105,20 @@ describe Ratelimit do
     expect(@r.count('value1', 10)).to eql(1)
   end
 
+  context "using the checkout_redis_with option" do
+    let(:redis) { Redis.new }
+    let(:redis_checkout_lambda) do
+      lambda do |&block|
+        block.call(redis)
+      end
+    end
+
+    let(:key) { SecureRandom.hex(6) }
+    subject { Ratelimit.new(key, checkout_redis_with: redis_checkout_lambda) }
+
+    it "adds correctly" do
+      subject.add("value1", 3)
+      expect(subject.count("value1", 1)).to eq(3)
+    end
+  end
 end
