@@ -58,6 +58,7 @@ You can also pass a block that will only get executed if the given threshold is 
 ``` rb
 ratelimit.exec_within_threshold phone_number, threshold: 10, interval: 30 do
   some_rate_limited_code
+  ratelimit.add(phone_number)
 end
 ```
 
