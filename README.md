@@ -4,7 +4,7 @@
 [![Code Climate](https://img.shields.io/codeclimate/github/ejfinneran/ratelimit.svg)](https://codeclimate.com/github/ejfinneran/ratelimit)
 [![Coverage Status](https://img.shields.io/coveralls/ejfinneran/ratelimit.svg)](https://coveralls.io/r/ejfinneran/ratelimit)
 
-Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](http://chris6f.com/rate-limiting-with-redis).
+Ratelimit provides a way to rate limit actions across multiple servers using Redis.  This is a port of RateLimit.js found [here](https://github.com/chriso/redback/blob/master/lib/advanced_structures/RateLimit.js) and inspired by [this post](https://gist.github.com/chriso/54dd46b03155fcf555adccea822193da).
 
 
 ## Installation
@@ -58,6 +58,7 @@ You can also pass a block that will only get executed if the given threshold is 
 ``` rb
 ratelimit.exec_within_threshold phone_number, threshold: 10, interval: 30 do
   some_rate_limited_code
+  ratelimit.add(phone_number)
 end
 ```
 
