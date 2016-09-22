@@ -1,6 +1,24 @@
 require 'spec_helper'
 
 describe Ratelimit do
+  describe '.initialize' do
+    subject { described_class.new(key, options) }
+
+    let(:options) { Hash.new }
+
+    context 'with key' do
+      let(:key) { 'key' }
+
+      context 'with redis option' do
+        let(:redis) { double('redis') }
+        let(:options) { super().merge(redis: redis) }
+
+        it 'wraps redis in redis-namespace' do
+          expect(subject.send(:redis)).to be_instance_of(Redis::Namespace)
+        end
+      end
+    end
+  end
 
   before do
     @r = Ratelimit.new("key")
