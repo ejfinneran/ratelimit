@@ -75,7 +75,7 @@ describe Ratelimit do
     expect(@r.within_bounds?("value1", {:threshold => 10, :interval => 30})).to be false
   end
 
-  it "accept a threshhold and a block that gets executed once it's below the threshold" do
+  it "accept a threshold and a block that gets executed once it's below the threshold" do
     expect(@r.count("key", 30)).to eq(0)
     31.times do
       @r.add("key")
@@ -100,7 +100,7 @@ describe Ratelimit do
   end
 
 
-  it "counts correclty if bucket_span equals count-interval  " do
+  it "counts correctly if bucket_span equals count-interval  " do
     @r = Ratelimit.new("key", {:bucket_span => 10, bucket_interval: 1})
     @r.add('value1')
     expect(@r.count('value1', 10)).to eql(1)
