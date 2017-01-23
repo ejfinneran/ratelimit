@@ -97,6 +97,7 @@ class Ratelimit
   # @example Send an email as long as we haven't send 5 in the last 10 minutes
   #   ratelimit.exec_with_threshold(email, [:threshold => 5, :interval => 600]) do
   #     send_another_email
+  #     ratelimit.add(email)
   #   end
   def exec_within_threshold(subject, options = {}, &block)
     options[:threshold] ||= 30
