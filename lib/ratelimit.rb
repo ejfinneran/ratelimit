@@ -55,7 +55,7 @@ class Ratelimit
   # @param [Integer] interval How far back (in seconds) to retrieve activity.
   def count(subject, interval)
     bucket = get_bucket
-    interval = [interval, @bucket_interval].max
+    interval = [[interval, @bucket_interval].max, @bucket_span].min
     count = (interval / @bucket_interval).floor
     subject = "#{@key}:#{subject}"
 

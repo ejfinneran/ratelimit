@@ -124,4 +124,9 @@ describe Ratelimit do
     expect(@r.count('value1', 10)).to eql(1)
   end
 
+  it "counts correctly if interval is greater than bucket_span" do
+    @r = Ratelimit.new("key", { bucket_span: 10, bucket_interval: 1})
+    @r.add('value1')
+    expect(@r.count('value1', 40)).to eql(1)
+  end
 end
