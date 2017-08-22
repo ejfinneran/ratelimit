@@ -3,7 +3,7 @@ require 'redis-namespace'
 
 class Ratelimit
 
-  # Create a RateLimit object.
+  # Create a Ratelimit object.
   #
   # @param [String] key A name to uniquely identify this rate limit. For example, 'emails'
   # @param [Hash] options Options hash
@@ -12,7 +12,7 @@ class Ratelimit
   # @option options [Integer] :bucket_expiry (@bucket_span) How long we keep data in each bucket before it is auto expired. Cannot be larger than the bucket_span.
   # @option options [Redis]   :redis (nil) Redis client if you need to customize connection options
   #
-  # @return [RateLimit] RateLimit instance
+  # @return [Ratelimit] Ratelimit instance
   #
   def initialize(key, options = {})
     @key = key
