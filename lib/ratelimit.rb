@@ -108,6 +108,31 @@ class Ratelimit
     yield(self)
   end
 
+  # Threadsafe version of exec_within_threshold that automatically increments count for subject
+  # @param [String] subject Subject for this rate limit
+  # @param [Hash] options Options hash
+  # @option options [Integer] :interval How far back to retrieve activity.
+  # @option options [Integer] :threshold Maximum number of actions
+  # @option options [Integer] :increment How much to increment count for subject
+  # @yield The block to be run
+  #
+  # @example Send an email as long as we haven't send 5 in the last 10 minutes
+  #   ratelimit.exec_and_increment_within_threshold(email, [:threshold => 5, :interval => 600]) do
+  #     send_another_email
+  #   end
+  def exec_and_increment_within_threshold(subject, options = {}, &block)
+    options[:threshold] ||= 30
+    options[:interval] ||= 30
+    options[:increment] ||= 1
+    @raw_redis.lock("#{subject}-ratelimit-lock", {:owner => "#{Thread.current.object_id}"}) do
+      while exceeded?(subject, options)
+        sleep @bucket_interval
+      end
+      add(subject, options[:increment])
+    end
+    yield(self)
+  end
+
   private
 
   def get_bucket(time = Time.now.to_i)
