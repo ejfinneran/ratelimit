@@ -1,5 +1,4 @@
 require 'redis'
-require 'redis-namespace'
 
 class Ratelimit
 
@@ -16,6 +15,7 @@ class Ratelimit
   # @return [RateLimit] RateLimit instance
   #
   def initialize(key, options = {})
+    @namespace = "ratelimit"
     @key = key
     unless options.is_a?(Hash)
       raise ArgumentError.new("Redis object is now passed in via the options hash - options[:redis]")
@@ -42,7 +42,7 @@ class Ratelimit
   # @return [Integer] The counter value
   def add(subject, count = 1)
     bucket = get_bucket
-    subject = "#{@key}:#{subject}"
+    subject = [@namespace, @key, subject].join(":")
     use_redis do |r|
       r.multi do
         r.hincrby(subject, bucket, count)
@@ -61,7 +61,7 @@ class Ratelimit
     bucket = get_bucket
     interval = [interval, @bucket_interval].max
     count = (interval / @bucket_interval).floor
-    subject = "#{@key}:#{subject}"
+    subject = [@namespace, @key, subject].join(":")
 
     keys = (0..count - 1).map do |i|
       (bucket - i) % @bucket_count
@@ -122,17 +122,13 @@ class Ratelimit
 
   def use_redis
     if @checkout_redis_with
-      @checkout_redis_with.call { |redis| yield(namespaced_redis_instance(redis)) }
+      @checkout_redis_with.call { |redis| yield(redis) }
     else
       yield single_redis_instance
     end
   end
 
   def single_redis_instance
-    @redis ||= namespaced_redis_instance(@redis || Redis.new)
-  end
-
-  def namespaced_redis_instance(redis)
-    Redis::Namespace.new(:ratelimit, redis: redis)
+    @redis ||= Redis.new
   end
 end

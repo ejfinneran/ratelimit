@@ -34,5 +34,4 @@ namespace :doc do
   task :clean do
     rm_r doc_dir if File.exists?(doc_destination)
   end
-
 end
