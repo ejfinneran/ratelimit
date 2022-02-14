@@ -83,7 +83,7 @@ describe Ratelimit do
 
     @value = nil
     expect do
-      timeout(1) do
+      Timeout.timeout(1) do
         @r.exec_within_threshold("key", {:threshold => 30, :interval => 30}) do
           @value = 2
         end

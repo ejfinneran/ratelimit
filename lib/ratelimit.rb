@@ -44,11 +44,11 @@ class Ratelimit
     bucket = get_bucket
     subject = [@namespace, @key, subject].join(":")
     use_redis do |r|
-      r.multi do
-        r.hincrby(subject, bucket, count)
-        r.hdel(subject, (bucket + 1) % @bucket_count)
-        r.hdel(subject, (bucket + 2) % @bucket_count)
-        r.expire(subject, @bucket_expiry)
+      r.multi do |pipeline|
+        pipeline.hincrby(subject, bucket, count)
+        pipeline.hdel(subject, (bucket + 1) % @bucket_count)
+        pipeline.hdel(subject, (bucket + 2) % @bucket_count)
+        pipeline.expire(subject, @bucket_expiry)
       end.first
     end
   end
