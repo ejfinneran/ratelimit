@@ -1,0 +1,80 @@
+version: 2.1
+jobs:
+  build:
+    docker:
+      - image: cimg/ruby:3.2.0
+
+    working_directory: ~/ratelimit
+
+    steps:
+      - checkout
+
+      - run:
+          name: "Ruby Bundler: Configure bundler"
+          command: |
+            bundle config set path '.bundle'
+
+      - restore_cache:
+          keys:
+            - v1-ruby-3.2.0-deps-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-ruby-3.2.0-deps-
+
+      - run:
+          name: install dependencies
+          command: |
+            bundle install --jobs=4 --retry=3
+            bundle clean --force
+
+      - save_cache:
+          paths:
+            - .bundle
+          key: v1-ruby-3.2.0-deps-{{ checksum "Gemfile.lock" }}
+
+      - run:
+          name: run tests
+          command: |
+            mkdir /tmp/test-results
+            
+            bundle exec rspec --format progress \
+                --format RspecJunitFormatter \
+                --out /tmp/test-results/rspec.xml \
+                --format progress
+
+      - store_test_results:
+          path: /tmp/test-results
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: test-results
+  deploy:
+    docker:
+      - image: cimg/ruby:3.2.0
+    working_directory: ~/ratelimit
+    steps:
+      - checkout
+      - run:
+          name: Set credentials
+          command: |
+            mkdir -p ~/.gem
+            touch ~/.gem/credentials
+            chmod 0600 ~/.gem/credentials
+            printf -- "---\n:github: Bearer ${GITHUB_TOKEN}\n" > ~/.gem/credentials
+      - run:
+          name: Release Gem
+          command: |
+            gem build ratelimit.gemspec
+            gem push --KEY github --host https://rubygems.pkg.github.com/buyapowa *.gem
+
+workflows:
+  version: 2
+  build-and-deploy:
+    jobs:
+      - build
+      - deploy:
+          context:
+            - gem-deploy
+          requires:
+            - build
+          filters:
+            branches:
+              only: master
