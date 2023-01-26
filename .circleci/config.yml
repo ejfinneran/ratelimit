@@ -53,17 +53,10 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Set credentials
-          command: |
-            mkdir -p ~/.gem
-            touch ~/.gem/credentials
-            chmod 0600 ~/.gem/credentials
-            printf -- "---\n:github: Bearer ${GITHUB_TOKEN}\n" > ~/.gem/credentials
-      - run:
           name: Release Gem
           command: |
             gem build ratelimit.gemspec
-            gem push --KEY github --host https://rubygems.pkg.github.com/buyapowa *.gem
+            gem push --host https://rubygems.pkg.github.com/buyapowa *.gem
 
 workflows:
   version: 2
