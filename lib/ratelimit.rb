@@ -2,6 +2,35 @@ require 'redis'
 require 'redis-namespace'
 
 class Ratelimit
+  COUNT_LUA_SCRIPT = <<-LUA.freeze
+    local subject = KEYS[1]
+    local oldest_bucket = tonumber(ARGV[1])
+    local current_bucket = tonumber(ARGV[2])
+    local count = 0
+
+    for bucket = oldest_bucket + 1, current_bucket do
+      local value = redis.call('HGET', subject, tostring(bucket))
+      if value then
+        count = count + tonumber(value)
+      end
+    end
+
+    return count
+  LUA
+
+  MAINTENANCE_LUA_SCRIPT = <<-LUA.freeze
+    local subject = KEYS[1]
+    local oldest_bucket = tonumber(ARGV[1])
+
+    -- Delete expired keys
+    local all_keys = redis.call('HKEYS', subject)
+    for _, key in ipairs(all_keys) do
+      local bucket_key = tonumber(key)
+      if bucket_key < oldest_bucket then
+        redis.call('HDEL', subject, tostring(bucket_key))
+      end
+    end
+  LUA
 
   # Create a Ratelimit object.
   #
@@ -30,6 +59,7 @@ class Ratelimit
       raise ArgumentError.new("Cannot have less than 3 buckets")
     end
     @raw_redis = options[:redis]
+    load_scripts
   end
 
   # Add to the counter for a given subject.
@@ -41,11 +71,13 @@ class Ratelimit
   def add(subject, count = 1)
     bucket = get_bucket
     subject = "#{@key}:#{subject}"
+
+    # Cleanup expired keys every 100th request
+    cleanup_expired_keys(subject) if rand < 0.01
+
     redis.multi do |transaction|
       transaction.hincrby(subject, bucket, count)
-      transaction.hdel(subject, (bucket + 1) % @bucket_count)
-      transaction.hdel(subject, (bucket + 2) % @bucket_count)
-      transaction.expire(subject, @bucket_expiry)
+      transaction.expire(subject, @bucket_expiry + @bucket_interval)
     end.first
   end
 
@@ -54,15 +86,12 @@ class Ratelimit
   # @param [String] subject Subject for the count
   # @param [Integer] interval How far back (in seconds) to retrieve activity.
   def count(subject, interval)
-    bucket = get_bucket
     interval = [[interval, @bucket_interval].max, @bucket_span].min
-    count = (interval / @bucket_interval).floor
+    oldest_bucket = get_bucket(Time.now.to_i - interval)
+    current_bucket = get_bucket
     subject = "#{@key}:#{subject}"
 
-    keys = (0..count - 1).map do |i|
-      (bucket - i) % @bucket_count
-    end
-    return redis.hmget(subject, *keys).inject(0) {|a, i| a + i.to_i}
+    execute_script(@count_script_sha, [subject], [oldest_bucket, current_bucket])
   end
 
   # Check if the rate limit has been exceeded.
@@ -111,7 +140,30 @@ class Ratelimit
   private
 
   def get_bucket(time = Time.now.to_i)
-    ((time % @bucket_span) / @bucket_interval).floor
+    (time / @bucket_interval).floor
+  end
+
+  # Cleanup expired keys for a given subject
+  def cleanup_expired_keys(subject)
+    oldest_bucket = get_bucket(Time.now.to_i - @bucket_expiry)
+    execute_script(@maintenance_script_sha, [subject], [oldest_bucket])
+  end
+
+  # Execute the script or reload the scripts on error
+  def execute_script(*args)
+    redis.evalsha(*args)
+  rescue Redis::CommandError => e
+    raise unless e.message =~ /NOSCRIPT/
+
+    load_scripts
+    retry
+  end
+
+  # Load the lua scripts into redis
+  # This must be on the redis.redis object, not the namespace
+  def load_scripts
+    @count_script_sha = redis.redis.script(:load, COUNT_LUA_SCRIPT)
+    @maintenance_script_sha = redis.redis.script(:load, MAINTENANCE_LUA_SCRIPT)
   end
 
   def redis
