@@ -14,6 +14,7 @@ describe Ratelimit do
         let(:options) { super().merge(redis: redis) }
 
         it 'wraps redis in redis-namespace' do
+          expect(redis).to receive(:script).with(:load, anything).twice
           expect(subject.send(:redis)).to be_instance_of(Redis::Namespace)
         end
       end
@@ -116,7 +117,6 @@ describe Ratelimit do
     end
     expect(@value).to be 1
   end
-
 
   it "counts correctly if bucket_span equals count-interval  " do
     @r = Ratelimit.new("key", {:bucket_span => 10, bucket_interval: 1})

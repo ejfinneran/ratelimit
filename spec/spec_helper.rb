@@ -16,7 +16,6 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'coveralls'
 Coveralls.wear!
-require 'fakeredis'
 require 'timecop'
 require 'ratelimit'
 
