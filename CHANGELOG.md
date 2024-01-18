@@ -1,3 +1,7 @@
+# 1.1.0
+
+* #45 fix inaccurate rate limit count
+
 # 1.0.4 
 
 * #41 Remove redis deprecation warning
