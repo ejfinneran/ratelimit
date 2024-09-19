@@ -26,17 +26,6 @@ Or install it yourself as:
 $ gem install ratelimit
 ```
 
-## Setup
-
-By default, Ratelimit will try to connect to a Redis server on `127.0.0.1:6379`. But, in most scenarios, you need to specify a different configuration.
-To do that, create a new redis client (or use an existing one) pointing to the right server and pass it as a parameter in the constructor.
-
-``` rb
-redis = Redis.new(host: "10.0.1.1", port: 6380, db: 15)
-...
-ratelimit = Ratelimit.new("messages", redis: redis)
-```
-
 ## Usage
 
 My example use case is bulk processing data against an external API.  This will allow you to limit multiple processes across multiple servers as long as they all use the same Redis database.
@@ -70,6 +59,18 @@ ratelimit.exec_within_threshold phone_number, threshold: 10, interval: 30 do
   some_rate_limited_code
   ratelimit.add(phone_number)
 end
+```
+
+### Connecting to an external Redis instance
+
+By default, Ratelimit will try to connect to a Redis server on `127.0.0.1:6379` and this works great when you have everything in one place. However, when you have a separate Redis server, you will need to make a few changes to specify its location.
+
+To do so, instantiate a redis client pointing to the right server (if you don't have one instance already) and pass it in the constructor.
+
+``` rb
+redis = Redis.new(host: "10.0.1.1", port: 6380, db: 15)
+...
+ratelimit = Ratelimit.new("messages", redis: redis)
 ```
 
 ## Documentation
