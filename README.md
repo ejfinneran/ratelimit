@@ -61,6 +61,18 @@ ratelimit.exec_within_threshold phone_number, threshold: 10, interval: 30 do
 end
 ```
 
+### Connecting to an external Redis instance
+
+By default, Ratelimit will try to connect to a Redis server on `127.0.0.1:6379` and this works great when you have everything in one place. However, when you have a separate Redis server, you will need to make a few changes to specify its location.
+
+To do so, instantiate a redis client pointing to the right server (if you don't have one instance already) and pass it in the constructor.
+
+``` rb
+redis = Redis.new(host: "10.0.1.1", port: 6380, db: 15)
+...
+ratelimit = Ratelimit.new("messages", redis: redis)
+```
+
 ## Documentation
 
 Full documentation can be found [here.](http://rubydoc.info/github/ejfinneran/ratelimit/frames)
